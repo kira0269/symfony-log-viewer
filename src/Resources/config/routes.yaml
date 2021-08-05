@@ -1,7 +1,7 @@
 #########> Dashboard routes <#########
 kira_log_viewer.dahsboard.index:
-  path: "/index"
-  controller: Kira0269\LogViewerBundle\Controller\DashboardController::list
+  path: "/"
+  controller: Kira0269\LogViewerBundle\Controller\DashboardController::index
   methods: [GET]
 
 #########< Dashboard routes >#########

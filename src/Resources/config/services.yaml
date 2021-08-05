@@ -1,5 +1,7 @@
 services:
   _defaults:
+    autoconfigure: true
+    autowire: true
     public: false
 
   Kira0269\LogViewerBundle\Controller\:

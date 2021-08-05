@@ -7,6 +7,6 @@
 
 ```yaml 
 kira0269_log_viewer:
-    resource: "@Kira0269LogViewerBundle/Resources/config/routes.yaml"
+    resource: "@LogViewerBundle/Resources/config/routes.yaml"
     prefix:   /logs
 ```

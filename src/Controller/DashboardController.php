@@ -9,6 +9,6 @@ class DashboardController extends AbstractController
 {
     public function index(): Response
     {
-        return new Response('Hello World !');
+        return $this->render('@LogViewer/dashboard/index.html.twig');
     }
 }

@@ -1,0 +1,6 @@
+services:
+  _defaults:
+    public: false
+
+  Kira0269\LogViewerBundle\Controller\:
+    resource: '../../Controller/*'

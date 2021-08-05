@@ -1,8 +1,15 @@
 services:
   _defaults:
-    autoconfigure: true
-    autowire: true
     public: false
 
   Kira0269\LogViewerBundle\Controller\:
     resource: '../../Controller/*'
+
+  Kira0269\LogViewerBundle\Services\LogParser\LogParserInterface:
+    class: Kira0269\LogViewerBundle\Services\LogParser\LogParser
+    arguments:
+      $logsDir: ''
+
+  kira_log_viewer.log_parser.default:
+    alias: Kira0269\LogViewerBundle\Services\LogParser\LogParserInterface
+    public: true

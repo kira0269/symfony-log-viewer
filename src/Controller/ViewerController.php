@@ -2,65 +2,24 @@
 
 namespace Kira0269\LogViewerBundle\Controller;
 
+use Kira0269\LogViewerBundle\LogParser\LogParserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ViewerController extends AbstractController
 {
     public function index(): Response
     {
-        return $this->render('@LogViewer/viewer/index.html.twig');
+        return $this->render('@LogViewer/viewer/index.html.twig', [
+            'groupKeys' => $this->getParameter('kira_log_viewer.group_regexes.keys')
+        ]);
     }
 
-    public function ajax(Request $request): JsonResponse
+    public function ajax(LogParserInterface $logParser): JsonResponse
     {
-        $logs = [
-            [
-                'date' => '2021-08-05T13:11:50.632049+00:00',
-                'context' => 'security',
-                'level' => 'DEBUG',
-                'description' => 'Checking for authenticator support',
-                'body' => '{"firewall_name":"main","authenticators":0}'
-            ],
-            [
-                'date' => '2021-08-05T13:11:50.632049+00:00',
-                'context' => 'security',
-                'level' => 'DEBUG',
-                'description' => 'Checking for authenticator support',
-                'body' => '{"firewall_name":"main","authenticators":0}'
-            ],
-            [
-                'date' => '2021-08-05T13:11:50.632049+00:00',
-                'context' => 'security',
-                'level' => 'DEBUG',
-                'description' => 'Checking for authenticator support',
-                'body' => '{"firewall_name":"main","authenticators":0}'
-            ],
-            [
-                'date' => '2021-08-05T13:11:50.632049+00:00',
-                'context' => 'security',
-                'level' => 'DEBUG',
-                'description' => 'Checking for authenticator support',
-                'body' => '{"firewall_name":"main","authenticators":0}'
-            ],
-            [
-                'date' => '2021-08-05T13:11:50.632049+00:00',
-                'context' => 'security',
-                'level' => 'DEBUG',
-                'description' => 'Checking for authenticator support',
-                'body' => '{"firewall_name":"main","authenticators":0}'
-            ]
-        ];
+        $logs = $logParser->parseLogs(\DateTime::createFromFormat('Y-m-d', '2021-07-28'), true);
 
-        $json = [
-            "draw" => $request->get('draw'),
-            "recordsTotal" => count($logs),
-            "recordsFiltered" => count($logs),
-            "data" => $logs
-        ];
-
-        return new JsonResponse($json);
+        return $this->json($logs);
     }
 }

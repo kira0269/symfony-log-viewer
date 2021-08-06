@@ -3,7 +3,7 @@
   "description": "Log viewer for Symfony 5 app",
   "minimum-stability": "stable",
   "license": "MIT",
-  "type": "library",
+  "type": "symfony-bundle",
   "authors": [
     {
       "name": "Valentin SALMERON",

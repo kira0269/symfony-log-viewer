@@ -1,0 +1,52 @@
+body {
+    background-color: lightgray;
+}
+
+.logs-table {
+    border-collapse: collapse;
+    display: table;
+    box-sizing: border-box;
+    text-indent: initial;
+    border-spacing: 2px;
+    border-color: grey;
+    background-color: #fff;
+    width: 100%;
+}
+
+th, td {
+    font-weight: unset;
+    padding-right: 10px
+}
+
+.logs-table th {
+    padding-top: 18px;
+    padding-bottom: 18px;
+    font-size: 18px;
+    color: #fff;
+    line-height: 1.4;
+    background-color: #6c7ae0
+}
+
+.logs-table td {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    font-size: 15px;
+    color: gray;
+    line-height: 1.4
+}
+
+.logs-table tbody tr:nth-child(even) {
+    background-color: #f8f6ff;
+}
+
+.logs-table thead {
+    box-shadow: 0 5px 20px 0 rgba(0, 0, 0, .1);
+    -moz-box-shadow: 0 5px 20px 0 rgba(0, 0, 0, .1);
+    -webkit-box-shadow: 0 5px 20px 0 rgba(0, 0, 0, .1);
+    -o-box-shadow: 0 5px 20px 0 rgba(0, 0, 0, .1);
+    -ms-box-shadow: 0 5px 20px 0 rgba(0, 0, 0, .1);
+}
+
+.logs-table tr {
+    border-bottom: 1px solid #f2f2f2;
+}

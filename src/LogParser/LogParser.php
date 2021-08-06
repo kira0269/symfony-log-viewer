@@ -1,28 +1,43 @@
 <?php
 
 
-namespace Kira0269\LogViewerBundle\Services\LogParser;
+namespace Kira0269\LogViewerBundle\LogParser;
 
 
+use DateTime;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
 class LogParser implements LogParserInterface
 {
     private string $logsDir;
+    private array $filePattern;
     private array $parsingRules;
+
     private array $errors = [];
 
     /**
      * LogParser constructor.
      *
-     * @param string $logsDir - Logs directory.
+     * @param string $logsDir      - Logs directory.
+     * @param array  $filePattern  - Log filenames pattern.
      * @param array  $parsingRules - Parsing rules defined in config.
      */
-    public function __construct(string $logsDir, array $parsingRules)
+    public function __construct(string $logsDir, array $filePattern, array $parsingRules)
     {
         $this->logsDir = $logsDir;
+        $this->filePattern = $filePattern;
         $this->parsingRules = $parsingRules;
+    }
+
+    /**
+     * Return errors thrown during parsing.
+     *
+     * @return array
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 
     /**
@@ -32,32 +47,47 @@ class LogParser implements LogParserInterface
      */
     public function hasErrors(): bool
     {
-        return [] !== $this->errors;
+        return !empty($this->errors);
     }
 
     /**
-     * Parse all .log files in logs directory
+     * Parse all .log files for a date in logs directory
      * and return them in an array.
+     *
+     * @param DateTime $dateTime
+     *
+     * @param bool     $merge    - If true, merge all logs from several files into one array.
      *
      * @return array
      */
-    public function parseLogs(): array
+    public function parseLogs(DateTime $dateTime, bool $merge = false): array
     {
         $parsedLogs = [];
         $this->errors = [];
+
+        $formattedDate = $dateTime->format($this->filePattern['date_format']);
 
         $finder = new Finder();
         $fileIterator = $finder
             ->in($this->logsDir)
             ->files()
-            ->name('*.log')
+            ->name("*$formattedDate.log")
             ->getIterator();
 
         foreach ($fileIterator as $fileInfo) {
             $parsedFile = $this->parseLogFile($fileInfo);
 
             if (!empty($parsedFile)) {
-                $parsedLogs[$fileInfo->getFilename()] = $this->parseLogFile($fileInfo);
+                $parsedLogs[$fileInfo->getFilename()] = $parsedFile;
+            }
+        }
+
+        if ($merge) {
+            // Unpacking string-keys arrays is possible since PHP 8.1
+            if (PHP_MAJOR_VERSION >= 8 && PHP_RELEASE_VERSION >= 1) {
+                $parsedLogs = array_merge([], ...$parsedLogs);
+            } else {
+                $parsedLogs = array_merge([], ...array_values($parsedLogs));
             }
         }
 
@@ -76,13 +106,12 @@ class LogParser implements LogParserInterface
     {
         $parsedFile = [];
 
-        $content = $logFile->getContents();
-        $lines = explode("\n", $content);
+        $file = new \SplFileObject($logFile->getRealPath());
 
-        foreach ($lines as $lineNumber => $line) {
-
+        // Loop until we reach the end of the file.
+        while (!$file->eof()) {
             try {
-                $parsedLine = $this->parseLine($line);
+                $parsedLine = $this->parseLine($file->fgets());
 
                 if (!empty($parsedLine)) {
                     $parsedFile[] = $parsedLine;
@@ -91,12 +120,13 @@ class LogParser implements LogParserInterface
             } catch (\Exception $exception) {
                 $this->errors[] = [
                     'log_file' => $logFile->getRealPath(),
-                    'line' => $line,
                     'error' => $exception->getMessage()
                 ];
             }
-
         }
+
+        // Unset the file to call __destruct(), closing the file handle.
+        $file = null;
 
         return $parsedFile;
     }

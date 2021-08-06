@@ -1,18 +1,20 @@
 services:
-  _defaults:
-    public: false
+    _defaults:
+        public: false
 
-  Kira0269\LogViewerBundle\Controller\:
-    resource: '../../Controller/'
-    tags: ['controller.service_arguments']
-    calls:
-      - [setContainer, ['@service_container']]
+    Kira0269\LogViewerBundle\Controller\:
+        resource: '../../Controller/'
+        tags: [ 'controller.service_arguments' ]
+        calls:
+            - [ setContainer, [ '@service_container' ] ]
 
-  Kira0269\LogViewerBundle\Services\LogParser\LogParserInterface:
-    class: Kira0269\LogViewerBundle\Services\LogParser\LogParser
-    arguments:
-      $logsDir: ''
+    Kira0269\LogViewerBundle\LogParser\LogParserInterface:
+        class: Kira0269\LogViewerBundle\LogParser\LogParser
+        arguments:
+            $logsDir: ~
+            $filePattern: ~
+            $parsingRules: ~
 
-  kira_log_viewer.log_parser.default:
-    alias: Kira0269\LogViewerBundle\Services\LogParser\LogParserInterface
-    public: true
+    kira_log_viewer.log_parser.default:
+        alias: Kira0269\LogViewerBundle\LogParser\LogParserInterface
+        public: true

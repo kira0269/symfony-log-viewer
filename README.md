@@ -15,7 +15,9 @@ kira_log_viewer:
 And these lines in ``config/packages/kira_log_viewer.yaml`` :
 ```yaml 
 kira_log_viewer:
-    logs_dir: '%kernel.logs_dir%' # default value, can be omitted
+    logs_dir: '%kernel.logs_dir%/rec'
+    file_pattern:
+        date_format: 'Y-m-d'
     parsing_rules:
         regex: '\[<date>\] <category>\.<severity>: <log>'
         group_regexes:
@@ -23,4 +25,20 @@ kira_log_viewer:
             category: '[a-z_]+'
             severity: '[A-Z]+'
             log: '.*'
+```
+
+## Usage
+Inject the LogParserInterface into your Controller/Service and parse your logs :
+```php
+class DefaultController extends AbstractController
+{
+
+    public function logsOfTheDay(LogParserInterface $logParser): Response
+    {
+        $date = new DateTime('now');
+        $logs = $logParser->parseLogs($date);
+        ...
+    }
+
+}
 ```

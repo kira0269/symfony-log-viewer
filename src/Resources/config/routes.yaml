@@ -1,19 +1,19 @@
 #########> Dashboard routes <#########
 kira_log_viewer.dashboard.index:
-  path: "/"
-  controller: Kira0269\LogViewerBundle\Controller\DashboardController::index
-  methods: [GET]
+    path: "/"
+    controller: Kira0269\LogViewerBundle\Controller\DashboardController::index
+    methods: [ GET ]
 
 kira_log_viewer.viewer.index:
-  path: "/viewer"
-  controller: Kira0269\LogViewerBundle\Controller\ViewerController::index
-  methods: [GET]
+    path: "/viewer"
+    controller: Kira0269\LogViewerBundle\Controller\ViewerController::index
+    methods: [ GET ]
 
 kira_log_viewer.viewer.ajax:
-  path: "/logs.json"
-  controller: Kira0269\LogViewerBundle\Controller\ViewerController::ajax
-  methods: [GET]
-  requirements:
-    _format: xmlhttp
+    path: "/logs.json"
+    controller: Kira0269\LogViewerBundle\Controller\ViewerController::ajax
+    methods: [ GET ]
+    requirements:
+        _format: xmlhttp
 
 #########< Dashboard routes >#########

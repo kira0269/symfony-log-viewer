@@ -36,6 +36,7 @@ class LogViewerExtension extends Extension
         $definition->setArgument('$logsDir', $config['logs_dir']);
         $definition->setArgument('$filePattern', $config['file_pattern']);
         $definition->setArgument('$parsingRules', $config['parsing_rules']);
-    }
 
+        $container->setParameter('logviewer.dashboard.blocks', $configs[0]['dashboard']['blocks']);
+    }
 }

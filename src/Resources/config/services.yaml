@@ -3,7 +3,10 @@ services:
     public: false
 
   Kira0269\LogViewerBundle\Controller\:
-    resource: '../../Controller/*'
+    resource: '../../Controller/'
+    tags: ['controller.service_arguments']
+    calls:
+      - [setContainer, ['@service_container']]
 
   Kira0269\LogViewerBundle\Services\LogParser\LogParserInterface:
     class: Kira0269\LogViewerBundle\Services\LogParser\LogParser

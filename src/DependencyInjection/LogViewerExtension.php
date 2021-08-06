@@ -4,6 +4,7 @@
 namespace Kira0269\LogViewerBundle\DependencyInjection;
 
 
+use Kira0269\LogViewerBundle\LogParser\LogParserInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -31,8 +32,9 @@ class LogViewerExtension extends Extension
             $config['parsing_rules']['regex'] = str_replace("<$groupName>", "(?<$groupName>$regex)", $config['parsing_rules']['regex']);
         }
 
-        $definition = $container->getDefinition('Kira0269\LogViewerBundle\Services\LogParser\LogParserInterface');
+        $definition = $container->getDefinition(LogParserInterface::class);
         $definition->setArgument('$logsDir', $config['logs_dir']);
+        $definition->setArgument('$filePattern', $config['file_pattern']);
         $definition->setArgument('$parsingRules', $config['parsing_rules']);
     }
 

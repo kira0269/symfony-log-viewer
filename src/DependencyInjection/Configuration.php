@@ -10,6 +10,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     private string $defaultLogsDir;
+    private string $defaultDateFormat = 'Y-m-d';
 
     public function __construct(string $defaultLogsDir)
     {
@@ -23,6 +24,12 @@ class Configuration implements ConfigurationInterface
         $treeBuilder->getRootNode()
             ->children()
                 ->scalarNode('logs_dir')->defaultValue($this->defaultLogsDir)->end()
+                ->arrayNode('file_pattern')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('date_format')->defaultValue($this->defaultDateFormat)->end()
+                    ->end()
+                ->end()
                 ->arrayNode('parsing_rules')
                     ->addDefaultsIfNotSet()
                     ->children()

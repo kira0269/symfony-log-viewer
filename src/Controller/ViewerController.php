@@ -4,6 +4,7 @@ namespace Kira0269\LogViewerBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ViewerController extends AbstractController
@@ -13,7 +14,7 @@ class ViewerController extends AbstractController
         return $this->render('@LogViewer/viewer/index.html.twig');
     }
 
-    public function ajax(): JsonResponse
+    public function ajax(Request $request): JsonResponse
     {
         $logs = [
             [
@@ -52,6 +53,14 @@ class ViewerController extends AbstractController
                 'body' => '{"firewall_name":"main","authenticators":0}'
             ]
         ];
-        return new JsonResponse($logs);
+
+        $json = [
+            "draw" => $request->get('draw'),
+            "recordsTotal" => count($logs),
+            "recordsFiltered" => count($logs),
+            "data" => $logs
+        ];
+
+        return new JsonResponse($json);
     }
 }

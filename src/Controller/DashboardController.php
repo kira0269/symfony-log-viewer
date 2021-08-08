@@ -10,7 +10,7 @@ class DashboardController extends AbstractController
     public function index(): Response
     {
         return $this->render('@LogViewer/dashboard/index.html.twig', [
-            'blocks' => $this->container->getParameter('logviewer.dashboard.blocks')
+            'blocks' => $this->getParameter('kira_log_viewer.dashboard.blocks')
         ]);
     }
 }

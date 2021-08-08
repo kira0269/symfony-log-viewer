@@ -4,9 +4,8 @@ services:
 
     Kira0269\LogViewerBundle\Controller\:
         resource: '../../Controller/'
-        tags: [ 'controller.service_arguments' ]
-        calls:
-            - [ setContainer, [ '@service_container' ] ]
+        autoconfigure: true
+        autowire: true
 
     Kira0269\LogViewerBundle\LogParser\LogParserInterface:
         class: Kira0269\LogViewerBundle\LogParser\LogParser

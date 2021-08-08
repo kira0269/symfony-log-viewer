@@ -32,11 +32,12 @@ class LogViewerExtension extends Extension
             $config['parsing_rules']['regex'] = str_replace("<$groupName>", "(?<$groupName>$regex)", $config['parsing_rules']['regex']);
         }
 
-        $definition = $container->getDefinition(LogParserInterface::class);
-        $definition->setArgument('$logsDir', $config['logs_dir']);
-        $definition->setArgument('$filePattern', $config['file_pattern']);
-        $definition->setArgument('$parsingRules', $config['parsing_rules']);
+        $container->getDefinition(LogParserInterface::class)
+            ->setArgument('$logsDir', $config['logs_dir'])
+            ->setArgument('$filePattern', $config['file_pattern'])
+            ->setArgument('$parsingRules', $config['parsing_rules']);
 
-        $container->setParameter('logviewer.dashboard.blocks', $configs[0]['dashboard']['blocks']);
+        $container->setParameter('kira_log_viewer.dashboard.blocks', $configs[0]['dashboard']['blocks']);
+        $container->setParameter('kira_log_viewer.group_regexes.keys', array_keys($config['parsing_rules']['group_regexes']));
     }
 }

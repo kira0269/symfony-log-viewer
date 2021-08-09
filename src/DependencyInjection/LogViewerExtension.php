@@ -3,7 +3,7 @@
 
 namespace Kira0269\LogViewerBundle\DependencyInjection;
 
-
+use Kira0269\LogViewerBundle\LogMetric\LogMetrics;
 use Kira0269\LogViewerBundle\LogParser\LogParserInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -12,7 +12,8 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class LogViewerExtension extends Extension
 {
-    public function getAlias(){
+    public function getAlias()
+    {
         return 'kira_log_viewer';
     }
 
@@ -39,7 +40,13 @@ class LogViewerExtension extends Extension
             ->setArgument('$logPattern', $config['log_pattern'])
             ->setArgument('$groupsConfig', $config['groups']);
 
-        $container->setParameter('kira_log_viewer.dashboard.blocks', $configs[0]['dashboard']['blocks']);
+        $container->getDefinition(LogMetrics::class)
+            ->setArgument('$groups', $config['groups'])
+            ->setArgument('$metricsConfig', $config['dashboard']['metrics']);
+
+        $container->setParameter('kira_log_viewer.dashboard.metrics_per_row', $config['dashboard']['metrics_per_row']);
+        $container->setParameter('kira_log_viewer.dashboard.metrics', $config['dashboard']['metrics']);
         $container->setParameter('kira_log_viewer.groups', $config['groups']);
+        $container->setParameter('kira_log_viewer.dashboard.date', $config['dashboard']['date']);
     }
 }

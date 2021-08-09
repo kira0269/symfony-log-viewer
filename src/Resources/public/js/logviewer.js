@@ -39,20 +39,25 @@ $(document).ready( function () {
                 d.draw = 1;
             },
             error: function (xhr, error, thrown) {
-                $("#dt-overlay").hide();
+                console.log(error)
             }
         },
-        "preDrawCallback": function( settings ) {
-            $("#dt-overlay").show();
-        },
-        "initComplete" : function(settings, json) {
-            $("#dt-overlay").hide();
+        "language": {
+            processing: '<i class="fas fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
         },
         "order": [[ 0, "desc" ]],
         "columnDefs": [
             {
                 "targets": "no-sort",
                 "orderable": false,
+            },
+            {
+                "className": "border border-gray-400 whitespace-nowrap",
+                "targets": 0,
+            },
+            {
+                "className": "border border-gray-400",
+                "targets": "_all"
             }
         ],
         "columns": columns

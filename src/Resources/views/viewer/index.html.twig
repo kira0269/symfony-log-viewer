@@ -2,6 +2,10 @@
 
 {% block stylesheets %}
     <link href="{{ asset('bundles/logviewer/vendors/DataTables/datatables.min.css') }}" rel="stylesheet">
+    <style>
+        #logsTable tr:nth-child(even) { background: #e4e3e3; }
+        #logsTable tr:nth-child(od) { background: #ffffff; }
+    </style>
 {% endblock %}
 {% block javascripts %}
     <script src="{{ asset('bundles/logviewer/vendors/DataTables/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
@@ -10,38 +14,38 @@
 {% endblock %}
 
 {% block body %}
-    <!--Container-->
-    <div class="w-full mx-auto pt-20">
+<div class="w-full mx-auto pt-20">
 
-        <div class="w-full px-4 md:px-0 md:mt-8 mb-16 text-gray-800 leading-normal">
+    <div class="w-full px-4 md:px-0 md:mt-8 mb-16 text-gray-800 leading-normal">
 
-            <div class="flex flex-wrap">
-                <div class="w-full p-3">
-                    <!--Log Table-->
-                    <div class="bg-white border rounded shadow p-2 text-sm">
-                        <table
-                                id="logsTable" class="logs-table table-auto w-full"
-                                data-remote-url="{{ path('kira_log_viewer.viewer.ajax') }}"
-                                data-columns-names="{{ groups|keys|json_encode }}"
-                                data-groups-config="{{ groups|json_encode }}"
-                        >
-                            <thead>
-                                <tr>
-                                    {% for key in groups|keys %}
-                                    <th>{{ key|capitalize }}</th>
-                                    {% endfor %}
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                    <!--/Log Table-->
+        <div class="flex flex-wrap">
+            <div class="w-full p-3">
+                <!--Log Table-->
+                <div class="bg-white border rounded shadow p-2 text-sm">
+                    <table
+                            id="logsTable"
+                            class="logs-table table-auto w-full border-collapse pt-10 mt-10"
+                            data-page-length="50"
+                            data-remote-url="{{ path('kira_log_viewer.viewer.ajax') }}"
+                            data-columns-names="{{ groups|keys|json_encode }}"
+                            data-groups-config="{{ groups|json_encode }}"
+                    >
+                        <thead>
+                            <tr>
+                                {% for key in groups|keys %}
+                                <th>{{ key|capitalize }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
+                <!--/Log Table-->
             </div>
-
         </div>
 
     </div>
-    <!--/Container-->
+
+</div>
 {% endblock %}

@@ -1,9 +1,8 @@
 <?php
 
-
 namespace Kira0269\LogViewerBundle\DependencyInjection;
 
-
+use Kira0269\LogViewerBundle\LogMetric\LogMetrics;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -50,13 +49,22 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('dashboard')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->arrayNode('blocks')
+                        ->scalarNode('date')->defaultValue('today')->end()
+                        ->integerNode('metrics_per_row')->defaultValue(2)->isRequired()->end()
+                        ->arrayNode('metrics')
                             ->arrayPrototype()
                                 ->children()
                                     ->scalarNode('title')->defaultValue('Errors')->end()
-                                    ->scalarNode('icon')->defaultValue('fa-calendar-check')->end()
-                                    ->scalarNode('color')->defaultValue('green')->end()
-                                    ->arrayNode('filter')
+                                    ->scalarNode('type')
+                                        ->defaultValue('counter')
+                                        ->validate()
+                                            ->ifNotInArray(array_keys(LogMetrics::METRIC_TYPES))
+                                            ->thenInvalid('Invalid metric filter type %s')
+                                        ->end()
+                                    ->end()
+                                    ->scalarNode('icon')->defaultValue('')->end()
+                                    ->scalarNode('color')->defaultValue('')->end()
+                                    ->arrayNode('filters')
                                         ->arrayPrototype()
                                             ->scalarPrototype()->end()
                                         ->end()

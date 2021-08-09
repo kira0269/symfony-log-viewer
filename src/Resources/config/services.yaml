@@ -13,3 +13,6 @@ services:
     kira_log_viewer.log_parser.default:
         alias: 'Kira0269\LogViewerBundle\LogParser\LogParserInterface'
         public: true
+
+    Kira0269\LogViewerBundle\LogMetric\LogMetrics:
+        class: Kira0269\LogViewerBundle\LogMetric\LogMetrics

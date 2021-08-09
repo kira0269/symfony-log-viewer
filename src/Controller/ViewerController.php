@@ -12,7 +12,7 @@ class ViewerController extends AbstractController
     public function index(): Response
     {
         return $this->render('@LogViewer/viewer/index.html.twig', [
-            'groupKeys' => $this->getParameter('kira_log_viewer.group_regexes.keys')
+            'groups' => $this->getParameter('kira_log_viewer.groups'),
         ]);
     }
 

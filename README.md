@@ -15,16 +15,25 @@ kira_log_viewer:
 And these lines in ``config/packages/kira_log_viewer.yaml`` :
 ```yaml 
 kira_log_viewer:
-    logs_dir: '%kernel.logs_dir%/rec'
+    #logs_dir: '%kernel.logs_dir%' - You can uncommented and edit this line to search logs somewhere else.
     file_pattern:
         date_format: 'Y-m-d'
-    parsing_rules:
-        regex: '\[<date>\] <category>\.<severity>: <log>'
-        group_regexes:
-            date: '.*'
-            category: '[a-z_]+'
-            severity: '[A-Z]+'
-            log: '.*'
+        
+    log_pattern: '\[<date>\] <category>\.<severity>: <log> <context> \[\]'
+    groups:
+        date:
+            regex: '.*'
+            type: date
+        category:
+            regex: '[a-z_]+'
+        severity:
+            regex: '[A-Z]+'
+        log:
+            regex: '[^\[.]*'
+        context:
+            regex: '\[.+\]'
+            type: json
+            
     dashboard:
         blocks:
             -

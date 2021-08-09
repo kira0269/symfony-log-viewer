@@ -28,16 +28,18 @@ class LogViewerExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         // We prepare the final regexes by replacing group names by their specific regex
-        foreach ($config['parsing_rules']['group_regexes'] as $groupName => $regex) {
-            $config['parsing_rules']['regex'] = str_replace("<$groupName>", "(?<$groupName>$regex)", $config['parsing_rules']['regex']);
+        foreach ($config['groups'] as $groupName => $groupConfig) {
+            $regex = $groupConfig['regex'];
+            $config['log_pattern'] = str_replace("<$groupName>", "(?<$groupName>$regex)", $config['log_pattern']);
         }
 
         $container->getDefinition(LogParserInterface::class)
             ->setArgument('$logsDir', $config['logs_dir'])
             ->setArgument('$filePattern', $config['file_pattern'])
-            ->setArgument('$parsingRules', $config['parsing_rules']);
+            ->setArgument('$logPattern', $config['log_pattern'])
+            ->setArgument('$groupsConfig', $config['groups']);
 
         $container->setParameter('kira_log_viewer.dashboard.blocks', $configs[0]['dashboard']['blocks']);
-        $container->setParameter('kira_log_viewer.group_regexes.keys', array_keys($config['parsing_rules']['group_regexes']));
+        $container->setParameter('kira_log_viewer.groups', $config['groups']);
     }
 }

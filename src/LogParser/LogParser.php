@@ -5,6 +5,7 @@ namespace Kira0269\LogViewerBundle\LogParser;
 
 
 use DateTime;
+use Exception;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -12,22 +13,25 @@ class LogParser implements LogParserInterface
 {
     private string $logsDir;
     private array $filePattern;
-    private array $parsingRules;
+    private string $logPattern;
+    private array $groupsConfig;
 
     private array $errors = [];
 
     /**
      * LogParser constructor.
      *
-     * @param string $logsDir      - Logs directory.
-     * @param array  $filePattern  - Log filenames pattern.
-     * @param array  $parsingRules - Parsing rules defined in config.
+     * @param string    $logsDir        - Logs directory.
+     * @param array     $filePattern    - Log filenames pattern.
+     * @param string    $logPattern     - Log pattern.
+     * @param array     $groupsConfig   - Parsing rules defined in config.
      */
-    public function __construct(string $logsDir, array $filePattern, array $parsingRules)
+    public function __construct(string $logsDir, array $filePattern, string $logPattern, array $groupsConfig)
     {
         $this->logsDir = $logsDir;
         $this->filePattern = $filePattern;
-        $this->parsingRules = $parsingRules;
+        $this->logPattern = $logPattern;
+        $this->groupsConfig = $groupsConfig;
     }
 
     /**
@@ -56,9 +60,10 @@ class LogParser implements LogParserInterface
      *
      * @param DateTime $dateTime
      *
-     * @param bool     $merge    - If true, merge all logs from several files into one array.
+     * @param bool     $merge - If true, merge all logs from several files into one array.
      *
      * @return array
+     * @throws Exception
      */
     public function parseLogs(DateTime $dateTime, bool $merge = false): array
     {
@@ -117,7 +122,7 @@ class LogParser implements LogParserInterface
                     $parsedFile[] = $parsedLine;
                 }
 
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $this->errors[] = [
                     'log_file' => $logFile->getRealPath(),
                     'error' => $exception->getMessage()
@@ -137,22 +142,23 @@ class LogParser implements LogParserInterface
      * @param string $lineToParse
      *
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     private function parseLine(string $lineToParse): array
     {
         $parsedLine = [];
 
-        $success = preg_match('/^'.$this->parsingRules['regex'].'$/', $lineToParse, $parsedLine);
+        $success = preg_match('/^'.$this->logPattern.'$/', $lineToParse, $parsedLine);
 
         if (false === $success) {
-            throw new \Exception('Error during log parsing !');
+            throw new Exception('Error during log parsing !');
         }
 
-        // If 'group_regexes' is configured, we keep only groups defined in it.
-        if (!empty($this->parsingRules['group_regexes'])) {
+        // If 'groups' is configured, we keep only groups defined in it.
+        if (!empty($this->groupsConfig)) {
             foreach ($parsedLine as $key => $match) {
-                if (!key_exists($key, $this->parsingRules['group_regexes'])) {
+
+                if (!key_exists($key, $this->groupsConfig)) {
                     unset($parsedLine[$key]);
                 }
             }

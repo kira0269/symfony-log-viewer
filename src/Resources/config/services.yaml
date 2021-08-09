@@ -9,11 +9,7 @@ services:
 
     Kira0269\LogViewerBundle\LogParser\LogParserInterface:
         class: Kira0269\LogViewerBundle\LogParser\LogParser
-        arguments:
-            $logsDir: ~
-            $filePattern: ~
-            $parsingRules: ~
 
     kira_log_viewer.log_parser.default:
-        alias: Kira0269\LogViewerBundle\LogParser\LogParserInterface
+        alias: 'Kira0269\LogViewerBundle\LogParser\LogParserInterface'
         public: true

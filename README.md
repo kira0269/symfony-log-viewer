@@ -94,7 +94,7 @@ Add custom blocks with parameters :
 title: title of your block
 icon: fontawesome icon
 color: tailwind css color of the block title and figure
-filter: array of filters depending on parsing_rules
+filter: array of filters depending on groups names
 ```
 
 Filters examples :

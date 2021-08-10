@@ -18,20 +18,24 @@ kira_log_viewer:
     #logs_dir: '%kernel.logs_dir%' - You can uncommented and edit this line to search logs somewhere else.
     file_pattern:
         date_format: 'Y-m-d'
-        
-    log_pattern: '\[<date>\] <category>\.<severity>: <log> <context> \[\]'
+    log_pattern: '\[<date>\] <channel>\.<level>: <message> <context> <extra>'
     groups:
         date:
             regex: '.*'
             type: date
-        category:
+        channel:
             regex: '[a-z_]+'
-        severity:
+            type: text
+        level:
             regex: '[A-Z]+'
-        log:
-            regex: '[^\[.]*'
+            type: text
+        message:
+            regex: '.*'
         context:
-            regex: '\[.+\]'
+            regex: (?'array1'\[(?>(?>[^[\]]+)|(?&array1))*\]) # match array1
+            type: json
+        extra:
+            regex: (?'array2'\[(?>(?>[^[\]]+)|(?&array2))*\]) # match array2
             type: json
             
     dashboard:
@@ -41,34 +45,34 @@ kira_log_viewer:
                 color: blue
                 icon: fa-calendar-check
                 filter:
-                    severity: [error, notice]
+                    level: [error, notice]
                     date: [today]
-                    category: [security]
-                    log: ['^MAIL$']
+                    channel: [security]
+                    message: ['^MAIL$']
             -
                 title: Notice
                 color: yellow
                 icon: fa-calendar-check
                 filter:
-                    severity: [notice]
+                    level: [notice]
             -
                 title: Info
                 color: green
                 icon: fa-calendar-check
                 filter:
-                    severity: [info]
+                    level: [info]
             -
                 title: Debug
                 color: gray
                 icon: fa-calendar-check
                 filter:
-                    severity: [debug]
+                    level: [debug]
             -
                 title: Error
                 color: red
                 icon: fa-calendar-check
                 filter:
-                    severity: [error]
+                    level: [error]
 ```
 
 ## Usage
@@ -100,8 +104,8 @@ filter: array of filters depending on groups names
 Filters examples :
 
 ```yaml
-severity: array of severity levels
+level: array of severity levels
 date: array of dates, ie. `today` or `yesterday` or `-6 day`
-category: array ie. `security` or 'authentication`
-log: array of regexes that match the error message
+channel: array ie. `security` or 'authentication`
+message: array of regexes that match the log message
 ```

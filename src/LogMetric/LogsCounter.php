@@ -43,7 +43,7 @@ class LogsCounter implements LogMetricInterface
         }
     }
 
-    public function matchFilters(array $log): bool
+    private function matchFilters(array $log): bool
     {
         $match = true;
         foreach ($this->filters as $filter => $conditions)

@@ -5,20 +5,42 @@ namespace Kira0269\LogViewerBundle\Controller;
 use Kira0269\LogViewerBundle\LogParser\LogParserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ViewerController extends AbstractController
 {
-    public function index(): Response
+    public function index(Request $request, LogParserInterface $logParser): Response
     {
+        $filePattern = $request->query->has('file') ? $request->query->get('file') : null;
+        $files = $logParser->getFiles($filePattern);
+        $dates = $logParser->getFilesDates();
+
         return $this->render('@LogViewer/viewer/index.html.twig', [
+            'files' => $files,
+            'dates' => $dates,
             'groups' => $this->getParameter('kira_log_viewer.groups'),
         ]);
     }
 
-    public function ajax(LogParserInterface $logParser): JsonResponse
+    public function ajax(Request $request, LogParserInterface $logParser): JsonResponse
     {
-        $logs = $logParser->parseLogs(\DateTime::createFromFormat('Y-m-d', '2021-07-28'), true);
+        $dateParts = [];
+        $date = null;
+        foreach (['year', 'month', 'day'] as $param) {
+            if (!$request->query->has($param)) {
+                $date = new \DateTime();
+                break;
+            }
+            $dateParts[] = $request->query->get($param);
+        }
+        if(null === $date) {
+            $date = \DateTime::createFromFormat('Y-m-d', implode('-', $dateParts));
+        }
+
+        $filePattern = $request->query->has('file') ? $request->query->get('file') : null;
+
+        $logs = $logParser->parseLogs($date, $filePattern, true);
 
         return $this->json($logs);
     }

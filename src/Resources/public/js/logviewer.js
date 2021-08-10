@@ -1,9 +1,17 @@
+/* DataTable */
+
 $(document).ready( function () {
     const logsTable = $('#logsTable');
     const groupsConfig = logsTable.data('groups-config');
 
     const textFormat = (value) => { return value; }
-    const jsonFormat = (value) => { return '<pre>'+JSON.parse(value)+'</pre>'; }
+    const jsonFormat = (value) => {
+        let formattedValue = JSON.parse(value);
+        if (typeof JSON.parse(value) === 'object') {
+            return '<pre>'+JSON.stringify(value)+'</pre>';
+        }
+        return '<pre>'+formattedValue+'</pre>';
+    }
 
     const format = (value, type) => {
         switch (type) {
@@ -23,21 +31,16 @@ $(document).ready( function () {
         })
     });
 
-    logsTable.DataTable({
-        "stateSave": true,
+    var datatableOptions = {
         "processing": true,
         "serverSide": false,
+        "search": {
+            "caseInsensitive": true
+        },
         "ajax": {
             url: logsTable.data('remote-url'),
             dataSrc: '',
             dataType: "json",
-            data: function ( d ) {
-                // Add date informations
-                d.year = '2021';
-                d.month = '07';
-                d.day = '08';
-                d.draw = 1;
-            },
             error: function (xhr, error, thrown) {
                 console.log(error)
             }
@@ -61,5 +64,54 @@ $(document).ready( function () {
             }
         ],
         "columns": columns
+    };
+    var logsDataTable = logsTable.DataTable(datatableOptions);
+
+    /* Toggle filters */
+
+    const toggleFilter = document.querySelector('#toggle');
+    const toggleable = document.querySelectorAll('.toggleable');
+    const btnFilter = document.querySelector('#apply-filter');
+    const dateFilterInput = document.querySelector('#date-filter');
+    const fileFilterSelect = document.querySelector('#file-filter');
+
+    toggleFilter.addEventListener('change', function() {
+        if (this.checked) {
+            toggleable[0].classList.add('hidden');
+            toggleable[1].classList.remove('hidden');
+        } else {
+            toggleable[1].classList.add('hidden');
+            toggleable[0].classList.remove('hidden');
+        }
+    });
+
+    /* Apply filters */
+
+    btnFilter.addEventListener('click', function() {
+
+        var url = logsTable.data('remote-url');
+        if (toggleable[0].classList.contains('hidden')) {
+            let filterFile = fileFilterSelect.options[fileFilterSelect.selectedIndex].value;
+            url += '?file=' + filterFile;
+        } else {
+            if(dateFilterInput.value !== 'all') {
+                let filterDate = new Date(dateFilterInput.value);
+                let filterMonth = ("0" + (filterDate.getMonth() + 1)).slice(-2);
+                url += '?year=' + filterDate.getFullYear() + '&month=' + filterMonth + '&day=' + filterDate.getDate();
+            }
+        }
+
+        logsDataTable.ajax.url(url).load();
+    });
+
+    /* Search */
+    const toggleCase = document.querySelector('#toggle-case');
+
+    toggleCase.addEventListener('change', function() {
+        datatableOptions.search.caseInsensitive = !this.checked;
+        dateFilterInput.selectedIndex = 0;
+        fileFilterSelect.selectedIndex = 0;
+        logsDataTable.destroy();
+        logsDataTable = logsTable.DataTable(datatableOptions);
     });
 });

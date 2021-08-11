@@ -16,9 +16,12 @@ And these lines in ``config/packages/kira_log_viewer.yaml`` :
 ```yaml 
 kira_log_viewer:
     #logs_dir: '%kernel.logs_dir%' - You can uncommented and edit this line to search logs somewhere else.
+
     file_pattern:
         date_format: 'Y-m-d'
+
     log_pattern: '\[<date>\] <channel>\.<level>: <message> <context> <extra>'
+
     groups:
         date:
             regex: '.*'
@@ -32,47 +35,53 @@ kira_log_viewer:
         message:
             regex: '.*'
         context:
-            regex: (?'array1'\[(?>(?>[^[\]]+)|(?&array1))*\]) # match array1
+            regex: (?'array1'\[(?>(?>[^[\]]+)|(?&array1))*\])|(?'object1'{(?>(?>[^{}]+)|(?&object1))*}) # match array1 or object1
             type: json
         extra:
             regex: (?'array2'\[(?>(?>[^[\]]+)|(?&array2))*\]) # match array2
             type: json
             
     dashboard:
-        blocks:
-            -
+        date: 'yesterday'
+        metrics_per_row: 3
+        metrics:
+            logs_of_day:
                 title: Daily
-                color: blue
+                type: counter
+                color: blue-600
                 icon: fa-calendar-check
-                filter:
-                    level: [error, notice]
-                    date: [today]
-                    channel: [security]
-                    message: ['^MAIL$']
-            -
+                filters:
+                    level: [ INFO ]
+                    channel: [ 'security' ]
+                    message: [ 'login' ]
+            notice:
                 title: Notice
-                color: yellow
+                color: yellow-600
                 icon: fa-calendar-check
-                filter:
-                    level: [notice]
-            -
+                filters:
+                    level: [ NOTICE ]
+            info:
                 title: Info
-                color: green
+                color: green-600
                 icon: fa-calendar-check
-                filter:
-                    level: [info]
-            -
+                filters:
+                    level: [ INFO ]
+            debug:
                 title: Debug
-                color: gray
+                color: gray-600
                 icon: fa-calendar-check
-                filter:
-                    level: [debug]
-            -
+                filters:
+                    level: [ DEBUG ]
+            error:
                 title: Error
-                color: red
+                color: red-600
                 icon: fa-calendar-check
-                filter:
-                    level: [error]
+                filters:
+                    level: [ ERROR ]
+            all_logs:
+                title: All
+                color: indigo-600
+                icon: fa-calendar-check
 ```
 
 ## Usage
@@ -92,20 +101,32 @@ class DefaultController extends AbstractController
 ```
 
 ## Dashboard configuration
+Define how many metrics should be displayed per row
+```yaml
+metrics_per_row: integer
+```
+
+Define dashboard date filter
+```yaml
+date: string (`today` or `yesterday` or `-6 day`)
+```
+
 Add custom blocks with parameters :
 
 ```yaml
 title: title of your block
+type: counter by default
 icon: fontawesome icon
 color: tailwind css color of the block title and figure
-filter: array of filters depending on groups names
+filters: array of filters depending on groups names
 ```
 
 Filters examples :
 
 ```yaml
-level: array of severity levels
+level: array of severity levels (case sensitive)
 date: array of dates, ie. `today` or `yesterday` or `-6 day`
 channel: array ie. `security` or 'authentication`
 message: array of regexes that match the log message
+extra: array of regexes that match the log extra message
 ```

@@ -8,5 +8,5 @@ interface LogMetricInterface
 
     public function calculate(array $logs);
 
-    public function getResult(): int;
+    public function getResult();
 }

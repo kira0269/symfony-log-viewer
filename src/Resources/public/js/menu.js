@@ -1,9 +1,5 @@
 
-
 /* Toggle dropdown list */
-var userMenuDiv = document.getElementById("userMenu");
-var userMenu = document.getElementById("userButton");
-
 var navMenuDiv = document.getElementById("nav-content");
 var navMenu = document.getElementById("nav-toggle");
 
@@ -11,20 +7,6 @@ document.onclick = check;
 
 function check(e) {
     var target = (e && e.target) || (event && event.srcElement);
-
-    //User Menu
-    if (!checkParent(target, userMenuDiv)) {
-        // click NOT on the menu
-        if (checkParent(target, userMenu)) {
-            // click on the link
-            if (userMenuDiv.classList.contains("invisible")) {
-                userMenuDiv.classList.remove("invisible");
-            } else { userMenuDiv.classList.add("invisible"); }
-        } else {
-            // click both outside link and outside menu, hide menu
-            userMenuDiv.classList.add("invisible");
-        }
-    }
 
     //Nav Menu
     if (!checkParent(target, navMenuDiv)) {

@@ -7,10 +7,13 @@ namespace Kira0269\LogViewerBundle\LogParser;
 use DateTime;
 use Exception;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\Iterator\PathFilterIterator;
 use Symfony\Component\Finder\SplFileInfo;
 
 class LogParser implements LogParserInterface
 {
+    const ALL_FILES = 'all';
+
     private string $logsDir;
     private array $filePattern;
     private string $logPattern;
@@ -55,31 +58,89 @@ class LogParser implements LogParserInterface
     }
 
     /**
+     * Return all parsed files.
+     *
+     * @param string|null $pattern
+     *
+     * @return PathFilterIterator
+     * @throws Exception
+     */
+    public function getFiles(string $pattern = null): PathFilterIterator
+    {
+        $finder = new Finder();
+        $finderPattern = $pattern ?: "*";
+        return $finder
+            ->in($this->logsDir)
+            ->files()
+            ->name($finderPattern)
+            ->getIterator();
+    }
+
+    /**
+     * Return all possible files dates.
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function getFilesDates(): array
+    {
+        $dates = [];
+        $dates[] = new \DateTime();
+
+        $finder = new Finder();
+        $files = $finder
+            ->in($this->logsDir)
+            ->files()
+            ->name('*')
+            ->getIterator();
+
+        foreach ($files as $fileInfo) {
+            $success = preg_match('/\-([0-9\-]+).log*/', $fileInfo->getFilename(), $date);
+            if ($success) {
+                try {
+                    if ($fileDate = \DateTime::createFromFormat($this->filePattern['date_format'], $date[1])) {
+                        if (!in_array($fileDate, $dates)) {
+                            $dates[] = $fileDate;
+                        }
+                    }
+                } catch (\ErrorException $e) {
+                    // cannot get date from filename with regexp
+                    $dates[] = $fileInfo->getFilename();
+                }
+            } else {
+                // regexp did not match
+                $dates[] = $fileInfo->getFilename();
+            }
+        }
+
+        rsort($dates);
+        return $dates;
+    }
+
+    /**
      * Parse all .log files for a date in logs directory
      * and return them in an array.
      *
      * @param DateTime $dateTime
      *
      * @param bool     $merge - If true, merge all logs from several files into one array.
+     * @param string   $filePattern - If not null, filter on log file name pattern
      *
      * @return array
      * @throws Exception
      */
-    public function parseLogs(DateTime $dateTime, bool $merge = false): array
+    public function parseLogs(DateTime $dateTime, string $filePattern = null, bool $merge = false): array
     {
         $parsedLogs = [];
         $this->errors = [];
 
-        $formattedDate = $dateTime->format($this->filePattern['date_format']);
+        if ($filePattern !== null) {
+            $formattedPattern = $filePattern === self::ALL_FILES ? "*" : "*$filePattern";
+        } else {
+            $formattedPattern = "*" . $dateTime->format($this->filePattern['date_format']) . ".log";
+        }
 
-        $finder = new Finder();
-        $fileIterator = $finder
-            ->in($this->logsDir)
-            ->files()
-            ->name("*$formattedDate.log")
-            ->getIterator();
-
-        foreach ($fileIterator as $fileInfo) {
+        foreach ($this->getFiles($formattedPattern) as $fileInfo) {
             $parsedFile = $this->parseLogFile($fileInfo);
 
             if (!empty($parsedFile)) {

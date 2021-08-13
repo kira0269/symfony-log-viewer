@@ -5,6 +5,15 @@
     <style>
         #logsTable tr:nth-child(even) { background: #e4e3e3; }
         #logsTable tr:nth-child(od) { background: #ffffff; }
+        .toggle-checkbox:checked {
+            @apply: right-0 border-green-400;
+            right: 0;
+            border-color: #68D391;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            @apply: bg-green-400;
+            background-color: #68D391;
+        }
     </style>
 {% endblock %}
 {% block javascripts %}
@@ -18,34 +27,41 @@
 
     <div class="w-full px-4 md:px-0 md:mt-8 mb-16 text-gray-800 leading-normal">
 
-        <div class="flex flex-wrap">
-            <div class="w-full p-3">
-                <!--Log Table-->
-                <div class="bg-white border rounded shadow p-2 text-sm">
-                    <table
-                            id="logsTable"
-                            class="logs-table table-auto w-full border-collapse pt-10 mt-10"
-                            data-page-length="50"
-                            data-remote-url="{{ path('kira_log_viewer.viewer.ajax') }}"
-                            data-columns-names="{{ groups|keys|json_encode }}"
-                            data-groups-config="{{ groups|json_encode }}"
-                    >
-                        <thead>
-                            <tr>
-                                {% for key in groups|keys %}
-                                <th>{{ key|capitalize }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+        {% include "@LogViewer/viewer/filters.html.twig" %}
+
+        <div class="w-full px-4 md:px-0 mb-16 text-gray-800 leading-normal">
+
+            <div class="flex flex-wrap">
+                <div class="w-full p-3">
+                    <!--Log Table-->
+                    <div class="bg-white border rounded shadow p-2 text-sm">
+                        <table
+                                id="logsTable"
+                                class="logs-table table-auto w-full border-collapse"
+                                data-page-length="10"
+                                data-remote-url="{{ path('kira_log_viewer.viewer.ajax') }}"
+                                data-columns-names="{{ groups|keys|json_encode }}"
+                                data-groups-config="{{ groups|json_encode }}"
+                        >
+                            <thead>
+                                <tr>
+                                    {% for key in groups|keys %}
+                                    <th>{{ key|capitalize }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="odd"><td class="border border-gray-400 whitespace-nowrap sorting_1">2021-08-13 07:44:08</td><td class=" border border-gray-400">axelliance_email</td><td class=" border border-gray-400">INFO</td><td class=" border border-gray-400">Envoie mail Courtier </td><td class=" border border-gray-400"><pre>"{\"projet\":136,\"0\":\"Demande de souscription\",\"1\":2,\"2\":\"noreply@entoria.fr\",\"3\":\"r1.digital@axelliance.com\"}"</pre></td><td class=" border border-gray-400"><pre>"[]"</pre></td></tr><tr class="even"><td class="border border-gray-400 whitespace-nowrap sorting_1">2021-08-13 07:44:08</td><td class=" border border-gray-400">axelliance_email</td><td class=" border border-gray-400">INFO</td><td class=" border border-gray-400">Envoie mail Entoria </td><td class=" border border-gray-400"><pre>"{\"projet\":136,\"0\":\"Demande de souscription\",\"1\":\"noreply@entoria.fr\",\"2\":\"r1.digital@axelliance.com\"}"</pre></td><td class=" border border-gray-400"><pre>"[]"</pre></td></tr><tr class="odd"><td class="border border-gray-400 whitespace-nowrap sorting_1">2021-08-13 07:43:07</td><td class=" border border-gray-400">axelliance_email</td><td class=" border border-gray-400">INFO</td><td class=" border border-gray-400">Envoie mail Courtier </td><td class=" border border-gray-400"><pre>"{\"projet\":136,\"0\":\"Proposition commerciale\",\"1\":2,\"2\":\"noreply@entoria.fr\",\"3\":\"r1.digital@axelliance.com\"}"</pre></td><td class=" border border-gray-400"><pre>"[]"</pre></td></tr><tr class="even"><td class="border border-gray-400 whitespace-nowrap sorting_1">2021-08-13 07:43:07</td><td class=" border border-gray-400">axelliance_email</td><td class=" border border-gray-400">INFO</td><td class=" border border-gray-400">Envoie mail Entoria </td><td class=" border border-gray-400"><pre>"{\"projet\":136,\"0\":\"Proposition commerciale\",\"1\":\"noreply@entoria.fr\",\"2\":\"r1.digital@axelliance.com\"}"</pre></td><td class=" border border-gray-400"><pre>"[]"</pre></td></tr><tr class="odd"><td class="border border-gray-400 whitespace-nowrap sorting_1">2021-08-13 07:42:19</td><td class=" border border-gray-400">axelliance_email</td><td class=" border border-gray-400">INFO</td><td class=" border border-gray-400">Envoie mail Entoria </td><td class=" border border-gray-400"><pre>"{\"projet\":136,\"0\":\"Tarification\",\"1\":\"noreply@entoria.fr\",\"2\":\"r1.digital@axelliance.com\"}"</pre></td><td class=" border border-gray-400"><pre>"[]"</pre></td></tr><tr class="even"><td class="border border-gray-400 whitespace-nowrap sorting_1">2021-08-13 07:42:18</td><td class=" border border-gray-400">axelliance_email</td><td class=" border border-gray-400">INFO</td><td class=" border border-gray-400">Envoie mail Courtier </td><td class=" border border-gray-400"><pre>"{\"projet\":136,\"0\":\"Tarification\",\"1\":2,\"2\":\"noreply@entoria.fr\",\"3\":\"r1.digital@axelliance.com\"}"</pre></td><td class=" border border-gray-400"><pre>"[]"</pre></td></tr><tr class="odd"><td class="border border-gray-400 whitespace-nowrap sorting_1">2021-08-13 07:19:57</td><td class=" border border-gray-400">axelliance_email</td><td class=" border border-gray-400">ERROR</td><td class=" border border-gray-400">Envoie mail Courtier </td><td class=" border border-gray-400"><pre>"{\"projet\":135,\"0\":\"Projet d'avenant\",\"1\":1,\"2\":\"noreply@entoria.fr\",\"3\":\"r1.digital@axelliance.com\"}"</pre></td><td class=" border border-gray-400"><pre>"[]"</pre></td></tr><tr class="even"><td class="border border-gray-400 whitespace-nowrap sorting_1">2021-08-13 07:19:57</td><td class=" border border-gray-400">axelliance_email</td><td class=" border border-gray-400">INFO</td><td class=" border border-gray-400">Envoie mail Entoria </td><td class=" border border-gray-400"><pre>"{\"projet\":135,\"0\":\"Projet d'avenant\",\"1\":\"noreply@entoria.fr\",\"2\":\"r1.digital@axelliance.com\"}"</pre></td><td class=" border border-gray-400"><pre>"[]"</pre></td></tr></tbody>
+                        </table>
+                    </div>
+                    <!--/Log Table-->
                 </div>
-                <!--/Log Table-->
             </div>
-        </div>
 
     </div>
 
 </div>
+{% endblock %}
+
+{% block footer %}
 {% endblock %}

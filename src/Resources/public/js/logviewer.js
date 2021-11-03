@@ -7,7 +7,7 @@ $(document).ready( function () {
     const textFormat = (value) => { return value; }
     const jsonFormat = (value) => {
         let formattedValue = JSON.parse(value);
-        if (typeof JSON.parse(value) === 'object') {
+        if (typeof formattedValue === 'object' && !Array.isArray(formattedValue)) {
             return '<pre>'+JSON.stringify(value)+'</pre>';
         }
         return '<pre>'+formattedValue+'</pre>';

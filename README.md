@@ -1,7 +1,7 @@
 # LogViewer for Symfony 5.x
 ## Installation
 
-- composer require kira0269/symfony-log-viewer
+- composer require kira0269/symfony-log-viewer-bundle
 
 ## Configuration
 Add these lines in ``config/routes/kira_log_viewer.yaml`` :
